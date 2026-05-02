@@ -1037,4 +1037,24 @@ Max delta-time capped at 50 ms to prevent integrator explosion on tab wake-up.
 
 ## License
 
-[Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) © 2026 Boris Maltsev
+Liquid Glass PRO is **dual-licensed**:
+
+- **AGPL-3.0-or-later** — free for opensource, personal, educational, and research use. See [`LICENSE`](LICENSE).
+- **Commercial license** — required for proprietary / closed-source use. See [`LICENSE-COMMERCIAL.md`](LICENSE-COMMERCIAL.md) or contact **boris.maltsev222@gmail.com**.
+
+You need a commercial license if **any** of the following apply:
+
+- You use Liquid Glass PRO on a website, web app, or SaaS whose source code is **not** released under AGPL-3.0.
+- You ship Liquid Glass PRO inside a closed-source desktop, mobile, or hybrid app.
+- You modify Liquid Glass PRO and serve the modified version over a network without releasing your modifications under AGPL-3.0 (AGPL §13).
+- You don't want the source-disclosure obligations of the AGPL to apply to your product.
+
+The opensource AGPL track and the commercial track receive identical code — the only difference is the legal terms under which you use it.
+
+---
+
+## Copyright
+
+Copyright © 2025–2026 Boris Maltsev. All rights reserved, except as expressly granted under the licenses above.
+
+Versions of Liquid Glass PRO published before the relicensing commit remain available under their original Apache-2.0 terms; all subsequent versions are governed by AGPL-3.0-or-later or by a commercial license.
