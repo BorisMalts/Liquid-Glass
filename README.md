@@ -11,6 +11,7 @@ Real Snell's law background refraction via html2canvas, Sellmeier optical disper
 - [What's New in v4.1](#whats-new-in-v41)
 - [What's New in v4.0](#whats-new-in-v40)
 - [How It Works](#how-it-works)
+- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [HTML Usage](#html-usage)
@@ -176,6 +177,152 @@ User DOM element (.lg)
             ├─ :hover    seven-layer box-shadow synchronised with L0 intensity ×1.5
             └─ ::after   thin-film conic-gradient with Born & Wolf 120°/240° phase offsets
 ```
+
+---
+
+## Project Structure
+
+Since v4.1 the implementation is split into ES modules under `src/` — one module per subsystem, one GLSL chunk per shader section. The root `liquid-glass-pro.js` is a thin entry-point that re-exports the full public API from `src/index.js`, so **existing imports keep working unchanged**:
+
+```js
+// Both are equivalent:
+import { initLiquidGlass } from './liquid-glass-pro.js';
+import { initLiquidGlass } from './src/index.js';
+```
+
+```
+liquid-glass-pro.js               Entry-point shim → re-exports src/index.js
+src/
+├── index.js                      Public API surface (all exports live here)
+│
+├── types/
+│   └── typedefs.js               §0   JSDoc type definitions (GpuTier, LGOptions, …)
+│
+├── constants/
+│   ├── defaults.js               §1   _defaults — compile-time option defaults
+│   ├── limits.js                 §1   MAX_WEBGL_ELEMENTS, MAX_DT
+│   ├── spring-presets.js         §1   SPRING — cursor / hover / tilt presets
+│   └── specular.js               §15.0 GLASS_IOR, F0, film thickness, roughness, anisotropy
+│
+├── state/
+│   ├── options.js                §1   _opts — live resolved options (+ _resetOptions)
+│   ├── runtime.js                §1   _state — global singleton runtime state
+│   ├── registry.js               §1   _elements / _tracked / _visibleElements
+│   ├── webgl-quota.js            §1   shared-WebGL element counter
+│   └── viewport-observer.js      §1   IntersectionObserver ref
+│
+├── variants/
+│   └── glass-variants.js         §1.5 GLASS_VARIANTS — 12 surface presets
+│
+├── gpu/
+│   └── detect-tier.js            §2   GPU tier detection (low / mid / high)
+│
+├── physics/
+│   ├── create-spring.js          §3   SpringState factory
+│   └── step-spring.js            §3   semi-implicit Euler integrator
+│
+├── houdini/
+│   └── register-properties.js    §4   CSS.registerProperty (--lg-mx, --lg-tx, …)
+│
+├── background/
+│   ├── capture.js                §5   html2canvas → WebGL texture upload
+│   ├── schedule.js               §5   requestIdleCallback capture chain
+│   ├── start.js                  §5   capture subsystem bootstrap
+│   └── stop.js                   §5   capture teardown
+│
+├── webgl/                        §6   Caustics + refraction render engine
+│   ├── shaders/
+│   │   ├── vertex.glsl.js        §6.0 fullscreen-triangle vertex shader
+│   │   └── fragment/             §6.0 fragment shader — one chunk per section
+│   │       ├── 00-prelude.glsl.js            uniforms + interpolants
+│   │       ├── 01-hash.glsl.js               §A  hash2 / PCG2D
+│   │       ├── 02-gradient-noise.glsl.js     §B  Perlin-style gnoise
+│   │       ├── 03-sellmeier.glsl.js          §C  Sellmeier dispersion (5 glasses)
+│   │       ├── 04-voronoi-caustics.glsl.js   §D  F2−F1 Voronoi + domain warp
+│   │       ├── 05-surface-normal.glsl.js     §E  animated bump-map normal
+│   │       ├── 06-refract-uv.glsl.js         §F  Snell's law UV displacement
+│   │       ├── 07-background-sampling.glsl.js §G chromatic background refraction
+│   │       ├── 08-fresnel.glsl.js            §H  Schlick Fresnel
+│   │       ├── 09-environment-reflection.glsl.js §I reflection probe
+│   │       ├── 10-beer-lambert.glsl.js       §H2 chromatic absorption
+│   │       ├── 11-frosted-scatter.glsl.js    §H3 frosted scatter refraction
+│   │       ├── 12-main.glsl.js               §J  composition pass
+│   │       └── index.js                      assembles _FRAG_SRC from chunks
+│   ├── compile-shader.js         §6.1 shader stage compiler
+│   ├── build-program.js          §6.1 program linker
+│   ├── init.js                   §6.1 shared WebGL2 context bootstrap
+│   └── render-caustics.js        §6.1 per-frame caustic pass
+│
+├── svg/
+│   ├── build-defs.js             §7   chromatic-aberration + micro-distortion filters
+│   └── inject.js                 §7   hidden <svg> injection
+│
+├── css/
+│   ├── build-css.js              §8   full stylesheet builder (incl. variant classes)
+│   ├── inject.js                 §8   <style> injection
+│   └── specular-fallback.js      §16  CSS fallback specular + hover amplification
+│
+├── sensors/
+│   └── orientation.js            §9   gyroscope tilt parallax
+│
+├── elements/
+│   ├── attach.js                 §10  per-element setup (canvas, springs, listeners)
+│   └── detach.js                 §10  per-element teardown
+│
+├── loop/
+│   └── raf-loop.js               §11  requestAnimationFrame render loop
+│
+├── observer/
+│   └── mutation-observer.js      §12  automatic .lg element discovery
+│
+├── api/                          §13  public API functions
+│   ├── init.js                        initLiquidGlass
+│   ├── destroy.js                     destroyLiquidGlass
+│   ├── attach-element.js              attachElement / detachElement
+│   ├── background.js                  refreshBackground / isRefractionActive
+│   ├── gpu.js                         getGpuTier
+│   ├── glass-type.js                  setGlassType
+│   ├── glass-variant.js               setGlassVariant / getGlassVariants
+│   ├── options.js                     getOptions
+│   └── version.js                     version
+│
+├── dom/                          §13  DOM factories
+│   ├── grain-layer.js                 createGrainLayer
+│   ├── wrap-distortion.js             wrapWithDistortion
+│   └── reply-quote.js                 createReplyQuote
+│
+├── adapters/
+│   └── react.js                  §14  useLiquidGlass React hook
+│
+└── specular/                     §15  Cook-Torrance PBR specular pass
+    ├── state.js                  §15.0 _spec — dedicated GL context state
+    ├── shaders/fragment/         §15.1 one GLSL chunk per section
+    │   ├── 00-prelude.glsl.js             uniforms
+    │   ├── 01-utility.glsl.js             safeNorm / hash / gnoise
+    │   ├── 02-surface-frame.glsl.js       §15.A normal + tangent frame
+    │   ├── 03-ggx-ndf.glsl.js             §15.B isotropic GGX
+    │   ├── 04-ggx-aniso.glsl.js           §15.C anisotropic GGX (Burley 2012)
+    │   ├── 05-fresnel.glsl.js             §15.D Schlick Fresnel from IOR
+    │   ├── 06-smith-visibility.glsl.js    §15.E height-correlated Smith (Heitz 2014)
+    │   ├── 07-smith-aniso.glsl.js         §15.F anisotropic Smith-GGX
+    │   ├── 08-kulla-conty.glsl.js         §15.G multi-bounce energy compensation
+    │   ├── 09-thin-film.glsl.js           §15.H Born & Wolf iridescence
+    │   ├── 10-area-light.glsl.js          §15.I representative-point (Karis 2013)
+    │   ├── 11-cook-torrance.glsl.js       §15.J full BRDF evaluation
+    │   ├── 12-lights.glsl.js              §15.K three-light configuration
+    │   ├── 13-vignette.glsl.js            §15.L vignette + alpha
+    │   ├── 14-main.glsl.js                §15.M main
+    │   └── index.js                       assembles _SPEC_FRAG_SRC from chunks
+    ├── build-program.js          §15.1 program linker
+    ├── kulla-conty-lut.js        §15.1 E_avg LUT texture
+    ├── init.js                   §15.1 initSpecularPass
+    ├── attach-canvas.js          §15.2 attachSpecularCanvas
+    ├── render.js                 §15.3 renderSpecularGL
+    ├── css.js                    §15.4 buildSpecularCSS
+    └── destroy.js                §15.5 destroySpecularPass
+```
+
+The `§N` markers match the section numbering used in the source comments, so every module maps 1:1 onto a section of the original architecture documentation.
 
 ---
 
