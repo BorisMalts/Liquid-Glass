@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liquid Glass PRO · v4.1.0 Demo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- html2canvas: local copy first (works offline / when CDN is blocked), CDN fallback with SRI -->
+    <script src="./node_modules/html2canvas/dist/html2canvas.min.js"
+            onerror="var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.integrity='sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';s.crossOrigin='anonymous';document.head.appendChild(s);"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -906,7 +908,7 @@
         'tinted-violet':{ label: 'Tinted Violet · UV-filter / amethyst',   name: 'Amethyst',        desc: 'Absorbs green (trough at 550nm), passes R+B → purple. UV-filter glass or amethyst crystal. Caustic tint = vivid violet.' },
         'tinted-amber': { label: 'Tinted Amber · Fe²⁺/S²⁻ amber glass',  name: 'Cognac Amber',    desc: 'Strong blue absorption (σB=4.2), minimal R/G → warm glow. Historically UV-protective pharmaceutical / spirits bottles.' },
         'mirror':       { label: 'Mirror · Silver first-surface coating',  name: 'Mirror',          desc: 'IOR 1.785 = SF11 flint → F0 ≈ 0.079. mirrorStrength=0.92 collapses transmission. Sharp specular caustic flares.' },
-        'ice':          { label: 'Ice · H₂O polycrystalline (Warren 2008)','name': 'Polar Ice',     desc: 'IOR = 1.309 (Warren & Brandt 2008, 550nm, T=−10°C). Frosted 0.42 simulates grain-boundary scatter. Cold blue caustics.' },
+        'ice':          { label: 'Ice · H₂O polycrystalline (Warren 2008)','name': 'Polar Ice',     desc: 'IOR = 1.309 (Warren & Brandt 2008, 550nm, T=−10°C). Frosted 0.55 simulates grain-boundary scatter. Cold blue caustics.' },
         'bronze':       { label: 'Bronze · Copper dichroic filter',        name: 'Bronze',          desc: 'Absorbs blue strongly, passes R+G at different rates. IOR 1.58. Warm copper-bronze caustic tint. Mirror 0.16.' },
         'emerald':      { label: 'Emerald · Cr³⁺-doped beryl glass',       name: 'Emerald',         desc: 'IOR 1.575. Cr³⁺ absorption at 430nm and 610nm creates the green transmission window near 500–570nm.' },
         'rose':         { label: 'Rose · Mn-doped cranberry glass',        name: 'Rose Quartz',     desc: 'Manganese-doped silicate: absorbs 490–580nm (green), passes red+blue. IOR 1.46. Soft rose-quartz caustics.' },
@@ -999,7 +1001,8 @@
             document.querySelectorAll('[data-lg-webgl]').length;
 
         const refEl = document.getElementById('dbRefract');
-        refEl.textContent = active ? '✓ active' : 'capturing…';
+        refEl.textContent = active ? '✓ active'
+            : (window.html2canvas ? 'capturing…' : '✗ html2canvas missing');
         refEl.className   = 'val ' + (active ? 'ok' : 'warn');
 
         const bgEl = document.getElementById('dbBg');

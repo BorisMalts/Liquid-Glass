@@ -204,23 +204,23 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
     // ── 8. Ice ────────────────────────────────────────────────────────────────
     // Polycrystalline water ice.
     // IOR = 1.309 (Warren & Brandt 2008, 550nm, T=–10°C).
-    // Frosted 0.40 simulates polycrystalline grain-boundary scatter.
+    // Frosted 0.55 simulates polycrystalline grain-boundary scatter.
     // Caustic tint = cold blue — ice acts as a natural UV-pass filter.
     ice: {
         label:        'Ice',
         cssClass:     'lg-v-ice',
         ior:          1.309,
-        tintRGB:      [0.70, 0.88, 1.00],
-        tintStrength: 0.24,
-        frosted:      0.42,
+        tintRGB:      [0.78, 0.90, 1.00],
+        tintStrength: 0.20,
+        frosted:      0.55,
         mirror:       0.07,
         smokeDensity: 0.04,
         causticScale: 1.35,
         causticTint:  [0.55, 0.83, 1.00],
-        blurPx:       20,
-        saturate:     60,
-        brightness:   1.22,
-        bgTint:       'rgba(165,215,255,0.16)',
+        blurPx:       24,
+        saturate:     55,
+        brightness:   1.26,
+        bgTint:       'rgba(190,225,255,0.24)',
     },
 
     // ── 9. Bronze ─────────────────────────────────────────────────────────────

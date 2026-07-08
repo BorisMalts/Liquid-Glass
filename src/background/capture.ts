@@ -6,6 +6,9 @@
 import { _state } from '../state/runtime.js';
 import { _opts } from '../state/options.js';
 
+/** One-shot flag so the missing-html2canvas warning is logged only once. */
+let _h2cWarned = false;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // §5  Background capture engine  (new in v2.0.0)
 //
@@ -79,7 +82,19 @@ import { _opts } from '../state/options.js';
 export async function _captureBackground() {
     // Mutex check: bail out if a capture is already in flight.
     const h2c = window.html2canvas;
-    if (_state.bgCapturing || !h2c) return;
+    if (!h2c) {
+        // Warn once — otherwise the missing dependency fails silently and
+        // refraction just never activates (isRefractionActive() stays false).
+        if (!_h2cWarned) {
+            _h2cWarned = true;
+            console.warn(
+                'LG-PRO: html2canvas is not loaded — background refraction is disabled. ' +
+                'Load html2canvas ^1.4.1 before initLiquidGlass().'
+            );
+        }
+        return;
+    }
+    if (_state.bgCapturing) return;
     _state.bgCapturing = true;
 
     try {

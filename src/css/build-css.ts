@@ -544,15 +544,16 @@ ${specCanvas}
 }
 
 /* ── 8. Ice ───────────────────────────────────────────────────────────────── */
-/* 20px blur + hue-rotate(200deg) = frosty blue haze.                         */
-/* High brightness (1.22): ice transmits very well in the visible range.      */
+/* Milky polycrystalline ice: heavy blur + desaturation + brightness lift.     */
+/* No hue-rotate — rotating backdrop hues turns coloured pages swampy-green;   */
+/* the cold cast comes from the blue-white overlay gradient instead.           */
 .lg.lg-v-ice {
-    backdrop-filter:         blur(20px) saturate(60%) brightness(1.22) hue-rotate(200deg);
-    -webkit-backdrop-filter: blur(20px) saturate(60%) brightness(1.22) hue-rotate(200deg);
+    backdrop-filter:         blur(24px) saturate(55%) brightness(1.26);
+    -webkit-backdrop-filter: blur(24px) saturate(55%) brightness(1.26);
     background:
         radial-gradient(ellipse 55% 42% at var(--lg-mx) var(--lg-my),
-            rgba(180,220,255,0.22) 0%, rgba(140,200,255,0.08) 52%, transparent 72%),
-        rgba(165,215,255,0.16);
+            rgba(215,238,255,0.30) 0%, rgba(170,215,255,0.14) 52%, transparent 74%),
+        rgba(190,225,255,0.24);
     box-shadow:
         inset  0  2.5px 0  rgba(220,240,255,0.65),
         inset  1px  0   0  rgba(190,225,255,0.30),
