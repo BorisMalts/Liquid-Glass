@@ -1,0 +1,25 @@
+/*!
+ * Liquid Glass PRO · v4.1.0 — constants/spring-presets (§1)
+ * Copyright (C) 2025-2026 Boris Maltsev · AGPL-3.0-or-later
+ * Commercial licenses available — see LICENSE-COMMERCIAL.md
+ */
+import type { SpringConfig } from '../types/typedefs.js';
+/**
+ * Immutable spring configuration presets.
+ * Each preset is a { stiffness, damping, mass } tuple that controls the
+ * character of the corresponding spring animation:
+ *
+ *   cursor  — fast, snappy tracking of pointer position
+ *   hover   — slightly slower fade-in/out of hover intensity
+ *   tilt    — slow, weighty tilt that lags behind the cursor
+ *
+ * The spring equation used is a semi-implicit Euler integration of:
+ *   F = −k·(x − target) − d·v    (damped harmonic oscillator)
+ *   a = F / m
+ *
+ * Tuning guide:
+ *   Increase stiffness → faster response (higher natural frequency)
+ *   Increase damping   → less overshoot / oscillation
+ *   Increase mass      → slower, more inertial feel
+ */
+export declare const SPRING: Readonly<Record<'cursor' | 'hover' | 'tilt', SpringConfig>>;

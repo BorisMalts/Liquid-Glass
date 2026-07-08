@@ -182,147 +182,167 @@ User DOM element (.lg)
 
 ## Project Structure
 
-Since v4.1 the implementation is split into ES modules under `src/` — one module per subsystem, one GLSL chunk per shader section. The root `liquid-glass-pro.js` is a thin entry-point that re-exports the full public API from `src/index.js`, so **existing imports keep working unchanged**:
+Since v4.1 the implementation is written in **TypeScript** and split into modules under `src/` — one module per subsystem, one GLSL chunk per shader section. `npm run build` compiles `src/` into browser-ready ES modules (plus `.d.ts` type declarations) in `dist/`. The root `liquid-glass-pro.js` is a thin entry-point that re-exports the compiled API from `dist/index.js`, so **existing imports keep working unchanged**:
 
 ```js
-// Both are equivalent:
+// Both are equivalent (after `npm run build`):
 import { initLiquidGlass } from './liquid-glass-pro.js';
-import { initLiquidGlass } from './src/index.js';
+import { initLiquidGlass } from './dist/index.js';
 ```
 
 ```
-liquid-glass-pro.js               Entry-point shim → re-exports src/index.js
+liquid-glass-pro.js               Entry-point shim → re-exports dist/index.js
+tsconfig.json                     Strict TypeScript config (ES2022 → dist/)
+dist/                             Compiled ESM + .d.ts (generated — do not edit)
 src/
-├── index.js                      Public API surface (all exports live here)
+├── index.ts                      Public API surface (all exports live here)
 │
 ├── types/
-│   └── typedefs.js               §0   JSDoc type definitions (GpuTier, LGOptions, …)
+│   ├── typedefs.ts               §0   Type definitions (GpuTier, LGOptions, ElementState, …)
+│   └── globals.d.ts              §0   Ambient globals (window.html2canvas, window.React)
 │
 ├── constants/
-│   ├── defaults.js               §1   _defaults — compile-time option defaults
-│   ├── limits.js                 §1   MAX_WEBGL_ELEMENTS, MAX_DT
-│   ├── spring-presets.js         §1   SPRING — cursor / hover / tilt presets
-│   └── specular.js               §15.0 GLASS_IOR, F0, film thickness, roughness, anisotropy
+│   ├── defaults.ts               §1   _defaults — compile-time option defaults
+│   ├── limits.ts                 §1   MAX_WEBGL_ELEMENTS, MAX_DT
+│   ├── spring-presets.ts         §1   SPRING — cursor / hover / tilt presets
+│   └── specular.ts               §15.0 GLASS_IOR, F0, film thickness, roughness, anisotropy
 │
 ├── state/
-│   ├── options.js                §1   _opts — live resolved options (+ _resetOptions)
-│   ├── runtime.js                §1   _state — global singleton runtime state
-│   ├── registry.js               §1   _elements / _tracked / _visibleElements
-│   ├── webgl-quota.js            §1   shared-WebGL element counter
-│   └── viewport-observer.js      §1   IntersectionObserver ref
+│   ├── options.ts                §1   _opts — live resolved options (+ _resetOptions)
+│   ├── runtime.ts                §1   _state — global singleton runtime state
+│   ├── registry.ts               §1   _elements / _tracked / _visibleElements
+│   ├── webgl-quota.ts            §1   shared-WebGL element counter
+│   └── viewport-observer.ts      §1   IntersectionObserver ref
 │
 ├── variants/
-│   └── glass-variants.js         §1.5 GLASS_VARIANTS — 12 surface presets
+│   └── glass-variants.ts         §1.5 GLASS_VARIANTS — 12 surface presets
 │
 ├── gpu/
-│   └── detect-tier.js            §2   GPU tier detection (low / mid / high)
+│   └── detect-tier.ts            §2   GPU tier detection (low / mid / high)
 │
 ├── physics/
-│   ├── create-spring.js          §3   SpringState factory
-│   └── step-spring.js            §3   semi-implicit Euler integrator
+│   ├── create-spring.ts          §3   SpringState factory
+│   └── step-spring.ts            §3   semi-implicit Euler integrator
 │
 ├── houdini/
-│   └── register-properties.js    §4   CSS.registerProperty (--lg-mx, --lg-tx, …)
+│   └── register-properties.ts    §4   CSS.registerProperty (--lg-mx, --lg-tx, …)
 │
 ├── background/
-│   ├── capture.js                §5   html2canvas → WebGL texture upload
-│   ├── schedule.js               §5   requestIdleCallback capture chain
-│   ├── start.js                  §5   capture subsystem bootstrap
-│   └── stop.js                   §5   capture teardown
+│   ├── capture.ts                §5   html2canvas → WebGL texture upload
+│   ├── schedule.ts               §5   requestIdleCallback capture chain
+│   ├── start.ts                  §5   capture subsystem bootstrap
+│   └── stop.ts                   §5   capture teardown
 │
 ├── webgl/                        §6   Caustics + refraction render engine
 │   ├── shaders/
-│   │   ├── vertex.glsl.js        §6.0 fullscreen-triangle vertex shader
+│   │   ├── vertex.glsl.ts        §6.0 fullscreen-triangle vertex shader
 │   │   └── fragment/             §6.0 fragment shader — one chunk per section
-│   │       ├── 00-prelude.glsl.js            uniforms + interpolants
-│   │       ├── 01-hash.glsl.js               §A  hash2 / PCG2D
-│   │       ├── 02-gradient-noise.glsl.js     §B  Perlin-style gnoise
-│   │       ├── 03-sellmeier.glsl.js          §C  Sellmeier dispersion (5 glasses)
-│   │       ├── 04-voronoi-caustics.glsl.js   §D  F2−F1 Voronoi + domain warp
-│   │       ├── 05-surface-normal.glsl.js     §E  animated bump-map normal
-│   │       ├── 06-refract-uv.glsl.js         §F  Snell's law UV displacement
-│   │       ├── 07-background-sampling.glsl.js §G chromatic background refraction
-│   │       ├── 08-fresnel.glsl.js            §H  Schlick Fresnel
-│   │       ├── 09-environment-reflection.glsl.js §I reflection probe
-│   │       ├── 10-beer-lambert.glsl.js       §H2 chromatic absorption
-│   │       ├── 11-frosted-scatter.glsl.js    §H3 frosted scatter refraction
-│   │       ├── 12-main.glsl.js               §J  composition pass
-│   │       └── index.js                      assembles _FRAG_SRC from chunks
-│   ├── compile-shader.js         §6.1 shader stage compiler
-│   ├── build-program.js          §6.1 program linker
-│   ├── init.js                   §6.1 shared WebGL2 context bootstrap
-│   └── render-caustics.js        §6.1 per-frame caustic pass
+│   │       ├── 00-prelude.glsl.ts            uniforms + interpolants
+│   │       ├── 01-hash.glsl.ts               §A  hash2 / PCG2D
+│   │       ├── 02-gradient-noise.glsl.ts     §B  Perlin-style gnoise
+│   │       ├── 03-sellmeier.glsl.ts          §C  Sellmeier dispersion (5 glasses)
+│   │       ├── 04-voronoi-caustics.glsl.ts   §D  F2−F1 Voronoi + domain warp
+│   │       ├── 05-surface-normal.glsl.ts     §E  animated bump-map normal
+│   │       ├── 06-refract-uv.glsl.ts         §F  Snell's law UV displacement
+│   │       ├── 07-background-sampling.glsl.ts §G chromatic background refraction
+│   │       ├── 08-fresnel.glsl.ts            §H  Schlick Fresnel
+│   │       ├── 09-environment-reflection.glsl.ts §I reflection probe
+│   │       ├── 10-beer-lambert.glsl.ts       §H2 chromatic absorption
+│   │       ├── 11-frosted-scatter.glsl.ts    §H3 frosted scatter refraction
+│   │       ├── 12-main.glsl.ts               §J  composition pass
+│   │       └── index.ts                      assembles _FRAG_SRC from chunks
+│   ├── compile-shader.ts         §6.1 shader stage compiler
+│   ├── build-program.ts          §6.1 program linker
+│   ├── init.ts                   §6.1 shared WebGL2 context bootstrap
+│   └── render-caustics.ts        §6.1 per-frame caustic pass
 │
 ├── svg/
-│   ├── build-defs.js             §7   chromatic-aberration + micro-distortion filters
-│   └── inject.js                 §7   hidden <svg> injection
+│   ├── build-defs.ts             §7   chromatic-aberration + micro-distortion filters
+│   └── inject.ts                 §7   hidden <svg> injection
 │
 ├── css/
-│   ├── build-css.js              §8   full stylesheet builder (incl. variant classes)
-│   ├── inject.js                 §8   <style> injection
-│   └── specular-fallback.js      §16  CSS fallback specular + hover amplification
+│   ├── build-css.ts              §8   full stylesheet builder (incl. variant classes)
+│   ├── inject.ts                 §8   <style> injection
+│   └── specular-fallback.ts      §16  CSS fallback specular + hover amplification
 │
 ├── sensors/
-│   └── orientation.js            §9   gyroscope tilt parallax
+│   └── orientation.ts            §9   gyroscope tilt parallax
 │
 ├── elements/
-│   ├── attach.js                 §10  per-element setup (canvas, springs, listeners)
-│   └── detach.js                 §10  per-element teardown
+│   ├── attach.ts                 §10  per-element setup (canvas, springs, listeners)
+│   └── detach.ts                 §10  per-element teardown
 │
 ├── loop/
-│   └── raf-loop.js               §11  requestAnimationFrame render loop
+│   └── raf-loop.ts               §11  requestAnimationFrame render loop
 │
 ├── observer/
-│   └── mutation-observer.js      §12  automatic .lg element discovery
+│   └── mutation-observer.ts      §12  automatic .lg element discovery
 │
 ├── api/                          §13  public API functions
-│   ├── init.js                        initLiquidGlass
-│   ├── destroy.js                     destroyLiquidGlass
-│   ├── attach-element.js              attachElement / detachElement
-│   ├── background.js                  refreshBackground / isRefractionActive
-│   ├── gpu.js                         getGpuTier
-│   ├── glass-type.js                  setGlassType
-│   ├── glass-variant.js               setGlassVariant / getGlassVariants
-│   ├── options.js                     getOptions
-│   └── version.js                     version
+│   ├── init.ts                        initLiquidGlass
+│   ├── destroy.ts                     destroyLiquidGlass
+│   ├── attach-element.ts              attachElement / detachElement
+│   ├── background.ts                  refreshBackground / isRefractionActive
+│   ├── gpu.ts                         getGpuTier
+│   ├── glass-type.ts                  setGlassType
+│   ├── glass-variant.ts               setGlassVariant / getGlassVariants
+│   ├── options.ts                     getOptions
+│   └── version.ts                     version
 │
 ├── dom/                          §13  DOM factories
-│   ├── grain-layer.js                 createGrainLayer
-│   ├── wrap-distortion.js             wrapWithDistortion
-│   └── reply-quote.js                 createReplyQuote
+│   ├── grain-layer.ts                 createGrainLayer
+│   ├── wrap-distortion.ts             wrapWithDistortion
+│   └── reply-quote.ts                 createReplyQuote
 │
 ├── adapters/
-│   └── react.js                  §14  useLiquidGlass React hook
+│   └── react.ts                  §14  useLiquidGlass React hook
 │
 └── specular/                     §15  Cook-Torrance PBR specular pass
-    ├── state.js                  §15.0 _spec — dedicated GL context state
+    ├── state.ts                  §15.0 _spec — dedicated GL context state
     ├── shaders/fragment/         §15.1 one GLSL chunk per section
-    │   ├── 00-prelude.glsl.js             uniforms
-    │   ├── 01-utility.glsl.js             safeNorm / hash / gnoise
-    │   ├── 02-surface-frame.glsl.js       §15.A normal + tangent frame
-    │   ├── 03-ggx-ndf.glsl.js             §15.B isotropic GGX
-    │   ├── 04-ggx-aniso.glsl.js           §15.C anisotropic GGX (Burley 2012)
-    │   ├── 05-fresnel.glsl.js             §15.D Schlick Fresnel from IOR
-    │   ├── 06-smith-visibility.glsl.js    §15.E height-correlated Smith (Heitz 2014)
-    │   ├── 07-smith-aniso.glsl.js         §15.F anisotropic Smith-GGX
-    │   ├── 08-kulla-conty.glsl.js         §15.G multi-bounce energy compensation
-    │   ├── 09-thin-film.glsl.js           §15.H Born & Wolf iridescence
-    │   ├── 10-area-light.glsl.js          §15.I representative-point (Karis 2013)
-    │   ├── 11-cook-torrance.glsl.js       §15.J full BRDF evaluation
-    │   ├── 12-lights.glsl.js              §15.K three-light configuration
-    │   ├── 13-vignette.glsl.js            §15.L vignette + alpha
-    │   ├── 14-main.glsl.js                §15.M main
-    │   └── index.js                       assembles _SPEC_FRAG_SRC from chunks
-    ├── build-program.js          §15.1 program linker
-    ├── kulla-conty-lut.js        §15.1 E_avg LUT texture
-    ├── init.js                   §15.1 initSpecularPass
-    ├── attach-canvas.js          §15.2 attachSpecularCanvas
-    ├── render.js                 §15.3 renderSpecularGL
-    ├── css.js                    §15.4 buildSpecularCSS
-    └── destroy.js                §15.5 destroySpecularPass
+    │   ├── 00-prelude.glsl.ts             uniforms
+    │   ├── 01-utility.glsl.ts             safeNorm / hash / gnoise
+    │   ├── 02-surface-frame.glsl.ts       §15.A normal + tangent frame
+    │   ├── 03-ggx-ndf.glsl.ts             §15.B isotropic GGX
+    │   ├── 04-ggx-aniso.glsl.ts           §15.C anisotropic GGX (Burley 2012)
+    │   ├── 05-fresnel.glsl.ts             §15.D Schlick Fresnel from IOR
+    │   ├── 06-smith-visibility.glsl.ts    §15.E height-correlated Smith (Heitz 2014)
+    │   ├── 07-smith-aniso.glsl.ts         §15.F anisotropic Smith-GGX
+    │   ├── 08-kulla-conty.glsl.ts         §15.G multi-bounce energy compensation
+    │   ├── 09-thin-film.glsl.ts           §15.H Born & Wolf iridescence
+    │   ├── 10-area-light.glsl.ts          §15.I representative-point (Karis 2013)
+    │   ├── 11-cook-torrance.glsl.ts       §15.J full BRDF evaluation
+    │   ├── 12-lights.glsl.ts              §15.K three-light configuration
+    │   ├── 13-vignette.glsl.ts            §15.L vignette + alpha
+    │   ├── 14-main.glsl.ts                §15.M main
+    │   └── index.ts                       assembles _SPEC_FRAG_SRC from chunks
+    ├── build-program.ts          §15.1 program linker
+    ├── kulla-conty-lut.ts        §15.1 E_avg LUT texture
+    ├── init.ts                   §15.1 initSpecularPass
+    ├── attach-canvas.ts          §15.2 attachSpecularCanvas
+    ├── render.ts                 §15.3 renderSpecularGL
+    ├── css.ts                    §15.4 buildSpecularCSS
+    └── destroy.ts                §15.5 destroySpecularPass
 ```
 
 The `§N` markers match the section numbering used in the source comments, so every module maps 1:1 onto a section of the original architecture documentation.
+
+### Building
+
+The published npm package ships pre-built `dist/`; building is only needed when working from the repository:
+
+```bash
+npm install          # installs the typescript devDependency
+npm run build        # tsc → dist/ (browser-ready ESM + .d.ts declarations)
+npm run typecheck    # strict type-check without emitting
+npm run dev          # build + local demo server (python run.py)
+```
+
+TypeScript consumers get full type coverage out of the box — `LGOptions`, `GlassVariantDef`, `GpuTier` and friends are exported from the package root:
+
+```ts
+import { initLiquidGlass, type LGOptions } from 'liquid-glass-pro';
+```
 
 ---
 

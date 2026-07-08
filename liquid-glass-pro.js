@@ -21,8 +21,9 @@
 
 // liquid-glass-pro.js · v4.1.0 — entry-point shim
 //
-// The implementation now lives in src/ (one module per subsystem — see
-// src/index.js for the full module map).  This file re-exports the public
-// API so existing imports of './liquid-glass-pro.js' keep working unchanged.
+// The implementation lives in src/ as TypeScript (one module per subsystem —
+// see src/index.ts for the full module map) and is compiled to dist/ with
+// `npm run build`.  This file re-exports the compiled public API so existing
+// imports of './liquid-glass-pro.js' keep working unchanged.
 
-export * from './src/index.js';
+export * from './dist/index.js';
