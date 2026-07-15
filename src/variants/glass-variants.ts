@@ -125,8 +125,8 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
         label:        'Tinted Blue',
         cssClass:     'lg-v-tinted-blue',
         ior:          1.47,
-        tintRGB:      [0.10, 0.44, 1.00],
-        tintStrength: 0.38,
+        tintRGB:      [0.08, 0.40, 1.00],
+        tintStrength: 0.42,
         frosted:      0.00,
         mirror:       0.04,
         smokeDensity: 0.08,
@@ -135,7 +135,7 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
         blurPx:       12,
         saturate:     145,
         brightness:   1.04,
-        bgTint:       'rgba(30,90,210,0.13)',
+        bgTint:       'rgba(22,80,225,0.24)',
     },
 
     // ── 5. Tinted Violet ──────────────────────────────────────────────────────
@@ -166,27 +166,27 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
         label:        'Tinted Amber',
         cssClass:     'lg-v-tinted-amber',
         ior:          1.53,
-        tintRGB:      [1.00, 0.64, 0.06],
-        tintStrength: 0.44,
+        tintRGB:      [1.00, 0.58, 0.05],
+        tintStrength: 0.48,
         frosted:      0.00,
         mirror:       0.05,
         smokeDensity: 0.06,
         causticScale: 1.15,
         causticTint:  [1.00, 0.76, 0.28],
         blurPx:       11,
-        saturate:     148,
-        brightness:   1.07,
-        bgTint:       'rgba(220,130,20,0.13)',
+        saturate:     95,
+        brightness:   1.06,
+        bgTint:       'rgba(232,148,28,0.32)',
     },
 
-    // ── 7. Mirror ─────────────────────────────────────────────────────────────
-    // First-surface mirror coating (silver on glass).
-    // IOR 1.785 = SF11 flint → F0 ≈ 0.079 (2× standard glass).
-    // u_mirrorStrength = 0.92 collapses transmission, renders pure reflection.
-    // Caustics become sharp specular flares.
-    mirror: {
-        label:        'Mirror',
-        cssClass:     'lg-v-mirror',
+    // ── 7. Pearl  (new in v4.2) ───────────────────────────────────────────────
+    // The former v4.1 "mirror" appearance, preserved verbatim as its own
+    // variant: a bright milky mother-of-pearl surface — minimal blur, high
+    // brightness, soft silver rims. Kept because the look works beautifully;
+    // it just isn't a mirror.
+    pearl: {
+        label:        'Pearl',
+        cssClass:     'lg-v-pearl',
         ior:          1.785,
         tintRGB:      [0.90, 0.93, 0.96],
         tintStrength: 0.08,
@@ -217,10 +217,10 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
         smokeDensity: 0.04,
         causticScale: 1.35,
         causticTint:  [0.55, 0.83, 1.00],
-        blurPx:       24,
-        saturate:     55,
-        brightness:   1.26,
-        bgTint:       'rgba(190,225,255,0.24)',
+        blurPx:       26,
+        saturate:     45,
+        brightness:   1.28,
+        bgTint:       'rgba(198,228,255,0.34)',
     },
 
     // ── 9. Bronze ─────────────────────────────────────────────────────────────
@@ -247,9 +247,31 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
     // Genuine emerald / chrome-doped beryl glass.
     // IOR 1.575 = mid emerald range. Cr³⁺ absorption peaks at 430nm and 610nm
     // create the distinctive green transmission window near 500–570nm.
+    // v4.2: colour now comes from a dense green overlay (CSS §8) instead of
+    // hue-rotate(140deg), which drifted into cyan on coloured backgrounds.
     emerald: {
         label:        'Emerald',
         cssClass:     'lg-v-emerald',
+        ior:          1.575,
+        tintRGB:      [0.06, 0.74, 0.28],
+        tintStrength: 0.50,
+        frosted:      0.00,
+        mirror:       0.09,
+        smokeDensity: 0.08,
+        causticScale: 1.08,
+        causticTint:  [0.18, 1.00, 0.42],
+        blurPx:       12,
+        saturate:     150,
+        brightness:   1.00,
+        bgTint:       'rgba(12,130,52,0.26)',
+    },
+
+    // ── 10b. Cyan  (new in v4.2) ──────────────────────────────────────────────
+    // The former v4.1 "emerald" appearance, preserved verbatim: a desaturated
+    // teal-cyan glass (the hue-rotate CSS is kept as-is for fidelity).
+    cyan: {
+        label:        'Cyan',
+        cssClass:     'lg-v-cyan',
         ior:          1.575,
         tintRGB:      [0.06, 0.74, 0.28],
         tintStrength: 0.44,
@@ -267,9 +289,31 @@ export const GLASS_VARIANTS: Readonly<Record<GlassVariantKey, GlassVariantDef>> 
     // ── 11. Rose ──────────────────────────────────────────────────────────────
     // Rose-quartz / cranberry glass / ruby flash.
     // Manganese-doped silicate glass: absorbs 490–580nm (green), passes red+blue.
+    // v4.2: colour now comes from a dense pink overlay (CSS §8) instead of
+    // hue-rotate(330deg), which muddied the pink on coloured backgrounds.
     rose: {
         label:        'Rose',
         cssClass:     'lg-v-rose',
+        ior:          1.46,
+        tintRGB:      [1.00, 0.34, 0.52],
+        tintStrength: 0.36,
+        frosted:      0.04,
+        mirror:       0.03,
+        smokeDensity: 0.04,
+        causticScale: 0.98,
+        causticTint:  [1.00, 0.52, 0.63],
+        blurPx:       11,
+        saturate:     140,
+        brightness:   1.06,
+        bgTint:       'rgba(248,105,145,0.20)',
+    },
+
+    // ── 11b. Mauve  (new in v4.2) ─────────────────────────────────────────────
+    // The former v4.1 "rose" appearance, preserved verbatim: a muted dusty
+    // rose-mauve glass (the hue-rotate CSS is kept as-is for fidelity).
+    mauve: {
+        label:        'Mauve',
+        cssClass:     'lg-v-mauve',
         ior:          1.46,
         tintRGB:      [1.00, 0.32, 0.50],
         tintStrength: 0.34,

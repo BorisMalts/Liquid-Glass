@@ -462,14 +462,14 @@
     <section class="hero">
         <div class="hero-badge">
             <span class="dot"></span>
-            Sellmeier · PCG2D Voronoi · F2−F1 · 12 Variants · v4.1.0
+            Sellmeier · PCG2D Voronoi · F2−F1 · 14 Variants · v4.2.0
         </div>
 
         <h1 class="hero-title">Liquid Glass<br><em>PRO</em></h1>
 
         <p class="hero-sub">
             Five real optical glasses from the Schott catalogue.
-            Twelve physically-based surface variants — frosted, mirror, ice, obsidian and more.
+            Fourteen physically-based surface variants — frosted, pearl, ice, obsidian and more.
             Sellmeier dispersion, Beer-Lambert chromatic absorption, PCG2D Voronoi.
         </p>
 
@@ -480,7 +480,7 @@
 
         <div class="pills">
             <span class="lg lg-pill lg-interactive">Sellmeier Dispersion</span>
-            <span class="lg lg-pill lg-interactive">12 Glass Variants</span>
+            <span class="lg lg-pill lg-interactive">15 Glass Variants</span>
             <span class="lg lg-pill lg-interactive">Beer-Lambert</span>
             <span class="lg lg-pill lg-interactive">Frosted Scatter</span>
             <span class="lg lg-pill lg-interactive">Mirror Boost</span>
@@ -503,7 +503,7 @@
         <div class="section-eyebrow">New in v4.1.0</div>
         <h2 class="section-title">Glass surface variants</h2>
         <p class="section-sub">
-            Twelve physically-based glass characters. Beer-Lambert chromatic absorption,
+            Fourteen physically-based glass characters. Beer-Lambert chromatic absorption,
             frosted scatter refraction, mirror Fresnel boost and smoke density —
             all derived from real optical physics.
         </p>
@@ -540,9 +540,9 @@
                 <span class="v-name">Amber</span>
                 <span class="v-ior">IOR 1.53</span>
             </button>
-            <button class="variant-btn" data-variant="mirror">
-                <span class="v-swatch" style="background:linear-gradient(135deg,#e8eef8,#b0c0d8,#e8eef8)"></span>
-                <span class="v-name">Mirror</span>
+            <button class="variant-btn" data-variant="pearl">
+                <span class="v-swatch" style="background:linear-gradient(135deg,#f6f2ee,#dcd3d6,#efe9f4,#f8f4f0)"></span>
+                <span class="v-name">Pearl</span>
                 <span class="v-ior">IOR 1.785</span>
             </button>
             <button class="variant-btn" data-variant="ice">
@@ -560,9 +560,19 @@
                 <span class="v-name">Emerald</span>
                 <span class="v-ior">IOR 1.575</span>
             </button>
+            <button class="variant-btn" data-variant="cyan">
+                <span class="v-swatch" style="background:radial-gradient(circle,rgba(80,215,205,.75),rgba(20,130,125,.8))"></span>
+                <span class="v-name">Cyan</span>
+                <span class="v-ior">IOR 1.575</span>
+            </button>
             <button class="variant-btn" data-variant="rose">
                 <span class="v-swatch" style="background:radial-gradient(circle,rgba(255,120,160,.7),rgba(200,50,100,.7))"></span>
                 <span class="v-name">Rose</span>
+                <span class="v-ior">IOR 1.46</span>
+            </button>
+            <button class="variant-btn" data-variant="mauve">
+                <span class="v-swatch" style="background:radial-gradient(circle,rgba(215,160,185,.75),rgba(150,95,125,.8))"></span>
+                <span class="v-name">Mauve</span>
                 <span class="v-ior">IOR 1.46</span>
             </button>
             <button class="variant-btn" data-variant="obsidian">
@@ -758,8 +768,8 @@
             </div>
             <div class="lg lg-card lg-interactive card-inner">
                 <span class="card-icon">🎨</span>
-                <div class="card-title">12 Glass Variants</div>
-                <div class="card-desc">Clear · Frosted · Smoke · Blue · Violet · Amber · Mirror · Ice · Bronze · Emerald · Rose · Obsidian. Each with physically-derived Beer-Lambert absorption coefficients.</div>
+                <div class="card-title">14 Glass Variants</div>
+                <div class="card-desc">Clear · Frosted · Smoke · Blue · Violet · Amber · Pearl · Ice · Bronze · Emerald · Cyan · Rose · Mauve · Obsidian. Each with physically-derived Beer-Lambert absorption coefficients.</div>
             </div>
             <div class="lg lg-card lg-interactive card-inner">
                 <span class="card-icon">✦</span>
@@ -833,7 +843,7 @@
         <div class="section-eyebrow">Complete capability list</div>
         <h2 class="section-title">All features</h2>
         <div class="feature-grid">
-            <div class="lg feature-item"><div class="feature-tag tag-v41">v4.1 NEW</div><div class="feature-name">12 Glass Variants</div><div class="feature-desc">Clear · Frosted · Smoke · Tinted × 3 · Mirror · Ice · Bronze · Emerald · Rose · Obsidian.</div></div>
+            <div class="lg feature-item"><div class="feature-tag tag-v41">v4.1 NEW</div><div class="feature-name">14 Glass Variants</div><div class="feature-desc">Clear · Frosted · Smoke · Tinted × 3 · Pearl · Ice · Bronze · Emerald · Cyan · Rose · Mauve · Obsidian.</div></div>
             <div class="lg feature-item"><div class="feature-tag tag-v41">v4.1 NEW</div><div class="feature-name">Beer-Lambert Absorption</div><div class="feature-desc">I = I₀·exp(−σ·d) per RGB channel. σ derived from tintRGB colorant absorption.</div></div>
             <div class="lg feature-item"><div class="feature-tag tag-v41">v4.1 NEW</div><div class="feature-name">Frosted Scatter</div><div class="feature-desc">Multi-scale noise UV jitter approximates sub-surface scatter in ground glass.</div></div>
             <div class="lg feature-item"><div class="feature-tag tag-v41">v4.1 NEW</div><div class="feature-name">Mirror Fresnel Boost</div><div class="feature-desc">Amplifies environmentReflection() and raises F0 toward 1 for silver-surface mirror.</div></div>
@@ -907,11 +917,13 @@
         'tinted-blue':  { label: 'Tinted Blue · Cobalt silicate glass',    name: 'Cobalt Blue',     desc: 'Beer-Lambert: σR=3.1, σG=1.8, σB=0.2 → strong red/green absorption. Caustic tint maps to vivid blue-cyan filaments.' },
         'tinted-violet':{ label: 'Tinted Violet · UV-filter / amethyst',   name: 'Amethyst',        desc: 'Absorbs green (trough at 550nm), passes R+B → purple. UV-filter glass or amethyst crystal. Caustic tint = vivid violet.' },
         'tinted-amber': { label: 'Tinted Amber · Fe²⁺/S²⁻ amber glass',  name: 'Cognac Amber',    desc: 'Strong blue absorption (σB=4.2), minimal R/G → warm glow. Historically UV-protective pharmaceutical / spirits bottles.' },
-        'mirror':       { label: 'Mirror · Silver first-surface coating',  name: 'Mirror',          desc: 'IOR 1.785 = SF11 flint → F0 ≈ 0.079. mirrorStrength=0.92 collapses transmission. Sharp specular caustic flares.' },
+        'pearl':        { label: 'Pearl · Mother-of-pearl nacre surface',   name: 'Pearl',           desc: 'The bright milky-silver surface formerly shipped as "mirror" in v4.1 — preserved as its own variant. Minimal blur, high brightness, soft iridescent rims.' },
         'ice':          { label: 'Ice · H₂O polycrystalline (Warren 2008)','name': 'Polar Ice',     desc: 'IOR = 1.309 (Warren & Brandt 2008, 550nm, T=−10°C). Frosted 0.55 simulates grain-boundary scatter. Cold blue caustics.' },
         'bronze':       { label: 'Bronze · Copper dichroic filter',        name: 'Bronze',          desc: 'Absorbs blue strongly, passes R+G at different rates. IOR 1.58. Warm copper-bronze caustic tint. Mirror 0.16.' },
-        'emerald':      { label: 'Emerald · Cr³⁺-doped beryl glass',       name: 'Emerald',         desc: 'IOR 1.575. Cr³⁺ absorption at 430nm and 610nm creates the green transmission window near 500–570nm.' },
-        'rose':         { label: 'Rose · Mn-doped cranberry glass',        name: 'Rose Quartz',     desc: 'Manganese-doped silicate: absorbs 490–580nm (green), passes red+blue. IOR 1.46. Soft rose-quartz caustics.' },
+        'emerald':      { label: 'Emerald · Cr³⁺-doped beryl glass',       name: 'Emerald',         desc: 'IOR 1.575. Cr³⁺ absorption at 430nm and 610nm creates the green transmission window near 500–570nm. v4.2: saturated gem green from a dense overlay.' },
+        'cyan':         { label: 'Cyan · Teal-cyan glass',                  name: 'Cyan',            desc: 'The desaturated teal-cyan surface formerly shipped as "emerald" in v4.1 — preserved as its own variant.' },
+        'rose':         { label: 'Rose · Mn-doped cranberry glass',        name: 'Rose Quartz',     desc: 'Manganese-doped silicate: absorbs 490–580nm (green), passes red+blue. IOR 1.46. v4.2: clean quartz pink from a dense overlay.' },
+        'mauve':        { label: 'Mauve · Dusty rose-mauve glass',          name: 'Mauve',           desc: 'The muted dusty rose-mauve surface formerly shipped as "rose" in v4.1 — preserved as its own variant.' },
         'obsidian':     { label: 'Obsidian · Volcanic rhyolitic glass',    name: 'Obsidian',        desc: 'Near-black: strong broadband absorption from Fe²⁺/Fe³⁺/magnetite inclusions. IOR 1.49. Polished mirror component.' },
     };
 

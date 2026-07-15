@@ -4,6 +4,7 @@
  * Commercial licenses available — see LICENSE-COMMERCIAL.md
  */
 import { _opts } from '../state/options.js';
+import { _updateAberration } from '../svg/update-aberration.js';
 
 /**
  * Changes the glass type at runtime without reinitialising.
@@ -14,4 +15,7 @@ import { _opts } from '../state/options.js';
  */
 export function setGlassType(type: string | number) {
     _opts.glassType = type;
+    // v4.2: the DOM-level chromatic aberration now tracks the glass Δn —
+    // SF11 fringes ~3.7× wider than BK7, N-FK51A ~0.5× (§7).
+    _updateAberration();
 }

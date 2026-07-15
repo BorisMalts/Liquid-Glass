@@ -338,8 +338,8 @@ vec3 chromaticCaustic(vec2 uvA) {
     float iorG = sellmeier(0.550);   // Green channel IOR — reference wavelength
     float iorB = sellmeier(0.450);   // Blue  channel IOR
 
-    float dispR = (iorG - iorR) * 0.5;   // Red shifts toward lower refraction
-    float dispB = (iorB - iorG) * 0.5;   // Blue shifts toward higher refraction
+    float dispR = (iorG - iorR) * 1.1;   // Red shifts toward lower refraction
+    float dispB = (iorB - iorG) * 1.1;   // Blue shifts toward higher refraction
 
     // Direction of prismatic split: 37° from horizontal — avoids alignment
     // with the caustic grid rotation series (multiples of 11.25°)

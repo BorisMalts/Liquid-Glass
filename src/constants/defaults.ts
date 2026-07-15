@@ -40,7 +40,7 @@ export const _defaults: LGOptions = {
     // ── §v4.1  Glass Variant System ──────────────────────────────────────────
     // Controls the physical character of the glass surface beyond optical type.
     // Values: 'clear' | 'frosted' | 'smoke' | 'tinted-blue' | 'tinted-violet'
-    //       | 'tinted-amber' | 'mirror' | 'ice' | 'bronze' | 'emerald'
+    //       | 'tinted-amber' | 'pearl' | 'ice' | 'bronze' | 'emerald' | 'cyan'
     //       | 'rose' | 'obsidian'
     glassVariant:  'clear',
 };

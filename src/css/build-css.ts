@@ -196,6 +196,10 @@ ${before}
     z-index:  4;
     border-radius:   inherit;
     mix-blend-mode:  screen;
+    /* v4.2: an experiment raising this to 0.16/0.38 made the large Voronoi
+       cells distractingly visible at rest — reverted to the subtle original.
+       Dispersion visibility is carried by the Δn-scaled DOM aberration (§7)
+       and the widened GLSL split constants instead. */
     opacity: 0;
     transition: opacity .35s ease;
 }
@@ -467,15 +471,15 @@ ${specCanvas}
 }
 
 /* ── 4. Tinted Blue ───────────────────────────────────────────────────────── */
-/* hue-rotate(210deg) shifts existing warm tones toward cobalt blue.          */
-/* bg rgba(30,90,210) = cobalt blue float glass tint.                         */
+/* Cobalt colour comes from the dense blue overlay — hue-rotate removed        */
+/* (v4.1 defect: it pushed the variant into purple on violet backgrounds).     */
 .lg.lg-v-tinted-blue {
-    backdrop-filter:         blur(12px) saturate(145%) brightness(1.04) hue-rotate(210deg);
-    -webkit-backdrop-filter: blur(12px) saturate(145%) brightness(1.04) hue-rotate(210deg);
+    backdrop-filter:         blur(12px) saturate(135%) brightness(1.02);
+    -webkit-backdrop-filter: blur(12px) saturate(135%) brightness(1.02);
     background:
         radial-gradient(ellipse 50% 36% at var(--lg-mx) var(--lg-my),
-            rgba(80,150,255,0.14) 0%, rgba(30,90,210,0.05) 50%, transparent 70%),
-        rgba(30,90,210,0.13);
+            rgba(70,140,255,0.24) 0%, rgba(30,90,220,0.10) 50%, transparent 70%),
+        rgba(22,80,225,0.24);
     box-shadow:
         inset  0  1.5px 0  rgba(140,195,255,0.50),
         inset  1px  0   0  rgba(100,165,255,0.22),
@@ -504,15 +508,17 @@ ${specCanvas}
 }
 
 /* ── 6. Tinted Amber ──────────────────────────────────────────────────────── */
-/* sepia(25%) pushes CSS toward the amber/golden register before hue-rotate.  */
-/* bg rgba(220,130,20) = amber glass warm honey tone.                         */
+/* Honey-gold colour comes from the dense amber overlay — sepia removed        */
+/* (v4.1 defect: sepia + green page content drifted the tint into olive).      */
 .lg.lg-v-tinted-amber {
-    backdrop-filter:         blur(11px) saturate(148%) brightness(1.07) sepia(25%);
-    -webkit-backdrop-filter: blur(11px) saturate(148%) brightness(1.07) sepia(25%);
+    /* saturate < 100%: mutes green/teal page content instead of amplifying it
+       (the olive cast came from saturate(130%) boosting what bled through) */
+    backdrop-filter:         blur(11px) saturate(95%) brightness(1.06);
+    -webkit-backdrop-filter: blur(11px) saturate(95%) brightness(1.06);
     background:
         radial-gradient(ellipse 52% 38% at var(--lg-mx) var(--lg-my),
-            rgba(255,185,50,0.16) 0%, rgba(220,130,20,0.06) 50%, transparent 70%),
-        rgba(220,130,20,0.13);
+            rgba(255,196,80,0.32) 0%, rgba(228,145,30,0.16) 50%, transparent 72%),
+        rgba(232,148,28,0.32);
     box-shadow:
         inset  0  1.5px 0  rgba(255,220,120,0.52),
         inset  1px  0   0  rgba(240,190,80,0.24),
@@ -522,11 +528,10 @@ ${specCanvas}
         0  0   55px -18px  rgba(220,150,30,0.30);
 }
 
-/* ── 7. Mirror ────────────────────────────────────────────────────────────── */
-/* Minimal blur (3px): mirror glass is optically flat, not diffusing.         */
-/* High brightness (1.18): reflects more than it absorbs.                     */
-/* box-shadow intensified: mirror surfaces have hard specular rim reflections. */
-.lg.lg-v-mirror {
+/* ── 7. Pearl ─────────────────────────────────────────────────────────────── */
+/* Former v4.1 mirror appearance, preserved verbatim as its own variant:       */
+/* bright milky mother-of-pearl — minimal blur, high brightness, soft rims.    */
+.lg.lg-v-pearl {
     backdrop-filter:         blur(3px) saturate(125%) brightness(1.18);
     -webkit-backdrop-filter: blur(3px) saturate(125%) brightness(1.18);
     background:
@@ -548,12 +553,12 @@ ${specCanvas}
 /* No hue-rotate — rotating backdrop hues turns coloured pages swampy-green;   */
 /* the cold cast comes from the blue-white overlay gradient instead.           */
 .lg.lg-v-ice {
-    backdrop-filter:         blur(24px) saturate(55%) brightness(1.26);
-    -webkit-backdrop-filter: blur(24px) saturate(55%) brightness(1.26);
+    backdrop-filter:         blur(26px) saturate(45%) brightness(1.28);
+    -webkit-backdrop-filter: blur(26px) saturate(45%) brightness(1.28);
     background:
         radial-gradient(ellipse 55% 42% at var(--lg-mx) var(--lg-my),
-            rgba(215,238,255,0.30) 0%, rgba(170,215,255,0.14) 52%, transparent 74%),
-        rgba(190,225,255,0.24);
+            rgba(222,242,255,0.38) 0%, rgba(180,220,255,0.18) 52%, transparent 76%),
+        rgba(198,228,255,0.34);
     box-shadow:
         inset  0  2.5px 0  rgba(220,240,255,0.65),
         inset  1px  0   0  rgba(190,225,255,0.30),
@@ -582,8 +587,47 @@ ${specCanvas}
 }
 
 /* ── 10. Emerald ──────────────────────────────────────────────────────────── */
-/* hue-rotate(140deg) shifts blue toward green; high saturation = vivid gem. */
+/* Saturated gem green from a dense overlay — hue-rotate removed               */
+/* (v4.1 defect: it landed in desaturated cyan; that look now lives in Cyan).  */
 .lg.lg-v-emerald {
+    backdrop-filter:         blur(12px) saturate(150%) brightness(1.00);
+    -webkit-backdrop-filter: blur(12px) saturate(150%) brightness(1.00);
+    background:
+        radial-gradient(ellipse 50% 36% at var(--lg-mx) var(--lg-my),
+            rgba(24,200,84,0.26) 0%, rgba(10,140,45,0.12) 50%, transparent 70%),
+        rgba(12,130,52,0.26);
+    box-shadow:
+        inset  0  1.5px 0  rgba(100,240,150,0.50),
+        inset  1px  0   0  rgba(70,210,110,0.22),
+        inset  0  -1px  0  rgba(0,0,0,0.12),
+        0  4px 18px  -4px  rgba(0,0,0,0.28),
+        0 16px 48px -12px  rgba(0,0,0,0.18),
+        0  0   55px -18px  rgba(20,180,70,0.32);
+}
+
+/* ── 11. Rose ─────────────────────────────────────────────────────────────── */
+/* Clean rose-quartz pink from a dense overlay — hue-rotate removed            */
+/* (v4.1 defect: it muddied into brownish mauve; that look now lives in Mauve).*/
+.lg.lg-v-rose {
+    backdrop-filter:         blur(11px) saturate(140%) brightness(1.06);
+    -webkit-backdrop-filter: blur(11px) saturate(140%) brightness(1.06);
+    background:
+        radial-gradient(ellipse 50% 36% at var(--lg-mx) var(--lg-my),
+            rgba(255,145,175,0.26) 0%, rgba(245,95,135,0.11) 50%, transparent 70%),
+        rgba(248,105,145,0.20);
+    box-shadow:
+        inset  0  1.5px 0  rgba(255,180,200,0.50),
+        inset  1px  0   0  rgba(255,150,175,0.22),
+        inset  0  -1px  0  rgba(0,0,0,0.10),
+        0  4px 18px  -4px  rgba(0,0,0,0.26),
+        0 16px 48px -12px  rgba(0,0,0,0.16),
+        0  0   55px -18px  rgba(240,80,120,0.28);
+}
+
+/* ── 11b. Cyan ────────────────────────────────────────────────────────────── */
+/* Former v4.1 emerald appearance, preserved verbatim as its own variant:      */
+/* desaturated teal-cyan (hue-rotate kept intentionally for fidelity).         */
+.lg.lg-v-cyan {
     backdrop-filter:         blur(12px) saturate(158%) brightness(1.03) hue-rotate(140deg);
     -webkit-backdrop-filter: blur(12px) saturate(158%) brightness(1.03) hue-rotate(140deg);
     background:
@@ -599,9 +643,10 @@ ${specCanvas}
         0  0   55px -18px  rgba(20,180,70,0.32);
 }
 
-/* ── 11. Rose ─────────────────────────────────────────────────────────────── */
-/* hue-rotate(330deg) = pink-red shift; slight sepia adds warmth.             */
-.lg.lg-v-rose {
+/* ── 11c. Mauve ───────────────────────────────────────────────────────────── */
+/* Former v4.1 rose appearance, preserved verbatim as its own variant:         */
+/* muted dusty rose-mauve (hue-rotate kept intentionally for fidelity).        */
+.lg.lg-v-mauve {
     backdrop-filter:         blur(11px) saturate(138%) brightness(1.05) hue-rotate(330deg);
     -webkit-backdrop-filter: blur(11px) saturate(138%) brightness(1.05) hue-rotate(330deg);
     background:
@@ -643,13 +688,15 @@ ${specCanvas}
 .lg.lg-v-tinted-violet.lg-interactive:hover,
 .lg.lg-v-tinted-amber.lg-interactive:hover,
 .lg.lg-v-emerald.lg-interactive:hover,
+.lg.lg-v-cyan.lg-interactive:hover,
 .lg.lg-v-rose.lg-interactive:hover,
+.lg.lg-v-mauve.lg-interactive:hover,
 .lg.lg-v-bronze.lg-interactive:hover {
     filter: brightness(1.08);
 }
 
-/* Mirror hover: make the reflection more intense */
-.lg.lg-v-mirror.lg-interactive:hover {
+/* Pearl hover: former mirror hover treatment */
+.lg.lg-v-pearl.lg-interactive:hover {
     filter: brightness(1.12) contrast(1.05);
 }
 

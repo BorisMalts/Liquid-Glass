@@ -53,9 +53,9 @@ vec3 chromaticRefraction(vec2 uv, vec3 normal) {
     // Δ = N.xy · (1/iorCh − 1/iorRef) · refractStr
     // iorG is the reference wavelength (green = peak photopic response)
     vec2 baseRefracted = refractUV(screenUV, normal);
-    vec2 uvR = clamp(baseRefracted + normal.xy * (1.0/iorR - 1.0/iorG) * u_refractStr * 80.0, 0.0, 1.0);
+    vec2 uvR = clamp(baseRefracted + normal.xy * (1.0/iorR - 1.0/iorG) * u_refractStr * 150.0, 0.0, 1.0);
     vec2 uvG = clamp(baseRefracted,                                                      0.0, 1.0);
-    vec2 uvB = clamp(baseRefracted + normal.xy * (1.0/iorB - 1.0/iorG) * u_refractStr * 80.0, 0.0, 1.0);
+    vec2 uvB = clamp(baseRefracted + normal.xy * (1.0/iorB - 1.0/iorG) * u_refractStr * 150.0, 0.0, 1.0);
 
     float r = texture(u_background, uvR).r;
     float g = texture(u_background, uvG).g;

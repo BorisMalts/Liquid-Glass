@@ -18,12 +18,12 @@ import type { GlassVariantDef } from '../types/typedefs.js';
  *
  * @param {string} variant - One of the GLASS_VARIANTS keys:
  *   'clear' | 'frosted' | 'smoke' | 'tinted-blue' | 'tinted-violet'
- *   'tinted-amber' | 'mirror' | 'ice' | 'bronze' | 'emerald' | 'rose' | 'obsidian'
+ *   'tinted-amber' | 'pearl' | 'ice' | 'bronze' | 'emerald' | 'cyan' | 'rose' | 'mauve' | 'obsidian'
  *
  * @example
  * setGlassVariant('frosted');    // ground-glass, heavy blur
  * setGlassVariant('tinted-blue'); // cobalt blue architectural glass
- * setGlassVariant('mirror');     // first-surface mirror coating
+ * setGlassVariant('pearl');      // mother-of-pearl nacre surface
  */
 export function setGlassVariant(variant: string) {
     const vd = (GLASS_VARIANTS as Record<string, GlassVariantDef>)[variant];
@@ -44,7 +44,7 @@ export function setGlassVariant(variant: string) {
     _opts.glassVariant = variant;
 
     // Also sync IOR if the variant has a specific physical IOR
-    // (e.g. ice = 1.309, mirror = 1.785, emerald = 1.575)
+    // (e.g. ice = 1.309, pearl = 1.785, emerald = 1.575)
     _opts.ior = vd.ior;
 }
 

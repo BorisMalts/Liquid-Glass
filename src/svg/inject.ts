@@ -6,6 +6,7 @@
 import { _state } from '../state/runtime.js';
 import { _buildSVGDefs } from './build-defs.js';
 import { _detectGpuTier } from '../gpu/detect-tier.js';
+import { _updateAberration } from './update-aberration.js';
 
 /**
  * Creates the hidden SVG element, populates it with the filter definitions,
@@ -31,4 +32,8 @@ export function _injectSVG() {
     svg.innerHTML = _buildSVGDefs(_detectGpuTier());
     document.body.appendChild(svg);
     _state.svgEl = svg;
+
+    // Scale the aberration to the active glass type right away so an init
+    // with e.g. glassType:'SF11' is reflected without a setGlassType() call.
+    _updateAberration();
 }

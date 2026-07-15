@@ -126,7 +126,8 @@ export interface ElementState {
 export type GlassVariantKey =
     | 'clear' | 'frosted' | 'smoke'
     | 'tinted-blue' | 'tinted-violet' | 'tinted-amber'
-    | 'mirror' | 'ice' | 'bronze' | 'emerald' | 'rose' | 'obsidian';
+    | 'pearl' | 'ice' | 'bronze'
+    | 'emerald' | 'cyan' | 'rose' | 'mauve' | 'obsidian';
 
 /**
  * Complete optical + visual character of a glass surface variant.

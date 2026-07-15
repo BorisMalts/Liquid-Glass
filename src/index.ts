@@ -39,16 +39,16 @@
 //   7. Houdini CSS custom properties (--lg-mx, --lg-my, --lg-tx …) are written
 //      every rAF frame, enabling smooth browser-native CSS transitions.
 //
-//   8. Twelve glass surface variants (clear · frosted · smoke · tinted-blue ·
-//      tinted-violet · tinted-amber · mirror · ice · bronze · emerald · rose ·
-//      obsidian) define physical optical character via Beer-Lambert absorption,
+//   8. Fourteen glass surface variants (clear · frosted · smoke · tinted-blue ·
+//      tinted-violet · tinted-amber · pearl · ice · bronze · emerald · cyan ·
+//      rose · mauve · obsidian) define physical optical character via Beer-Lambert absorption,
 //      Fresnel F0, scatter amount, and per-variant caustic tinting — all driven
 //      by GLSL uniforms uploaded per frame, switchable at runtime without reinit.
 //
 // ── What's new in v4.1.0 ──────────────────────────────────────────────────────
 //
 //   Glass Variant System
-//     Twelve physically-grounded surface presets derived from real optical
+//     Fourteen physically-grounded surface presets derived from real optical
 //     constants (Schott catalogue 2023, Warren & Brandt 2008, Palik 1998).
 //     Each variant encodes: IOR · Beer-Lambert tintRGB · tintStrength · frosted ·
 //     mirror · smokeDensity · causticScale · causticTint · blurPx · CSS overrides.
@@ -173,7 +173,7 @@
 //
 //   initLiquidGlass({
 //     glassType:          'BK7',      // 'BK7' | 'SF11' | 'NK51A' | 'NBK10' | 'F2'
-//     glassVariant:       'clear',    // see GLASS_VARIANTS for all 12 options
+//     glassVariant:       'clear',    // see GLASS_VARIANTS for all 14 options
 //     ior:                1.45,
 //     refractionStrength: 0.035,
 //     bgCaptureInterval:  2000,

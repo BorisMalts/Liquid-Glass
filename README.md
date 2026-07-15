@@ -2,7 +2,7 @@
 
 **v4.1.0** — WebGL2 physically-based liquid glass rendering for the web.
 
-Real Snell's law background refraction via html2canvas, Sellmeier optical dispersion across five Schott glass types, twelve physically-grounded glass surface variants, PCG2D-hashed Voronoi caustics with F2−F1 distance fields and domain warping, Cook-Torrance PBR specular, Beer-Lambert chromatic absorption, frosted scatter refraction, thin-film iridescence, Fresnel reflection, chromatic aberration, spring-physics cursor tracking — with an intelligent CSS fallback for every GPU tier.
+Real Snell's law background refraction via html2canvas, Sellmeier optical dispersion across five Schott glass types, fourteen physically-grounded glass surface variants, PCG2D-hashed Voronoi caustics with F2−F1 distance fields and domain warping, Cook-Torrance PBR specular, Beer-Lambert chromatic absorption, frosted scatter refraction, thin-film iridescence, Fresnel reflection, chromatic aberration, spring-physics cursor tracking — with an intelligent CSS fallback for every GPU tier.
 
 ---
 
@@ -35,14 +35,14 @@ Real Snell's law background refraction via html2canvas, Sellmeier optical disper
 
 ### Glass Variant System
 
-Twelve physically-grounded surface presets derived from real optical constants (Schott catalogue 2023, Warren & Brandt 2008, Palik 1998). Each variant encodes a complete optical and visual character: IOR, Beer-Lambert chromatic absorption, scatter amount, mirror strength, smoke density, caustic scale, caustic tint, CSS backdrop-filter overrides, and per-variant hover states.
+Fourteen physically-grounded surface presets derived from real optical constants (Schott catalogue 2023, Warren & Brandt 2008, Palik 1998). Pearl, cyan and mauve were added in v4.2; the standalone mirror variant was retired — the mirror-boost engine term lives on in pearl, bronze and smoke. Each variant encodes a complete optical and visual character: IOR, Beer-Lambert chromatic absorption, scatter amount, mirror strength, smoke density, caustic scale, caustic tint, CSS backdrop-filter overrides, and per-variant hover states.
 
 Switch variants at runtime with a single call — no reinitialisation required:
 
 ```js
 setGlassVariant('obsidian');     // volcanic glass, near-black, purple sheen
 setGlassVariant('tinted-amber'); // warm honey glass, Beer-Lambert σB=4.2
-setGlassVariant('mirror');       // first-surface silver mirror, SF11 IOR=1.785
+setGlassVariant('pearl');        // mother-of-pearl nacre, SF11 IOR=1.785
 setGlassVariant('ice');          // polycrystalline H₂O ice, IOR=1.309
 ```
 
@@ -54,11 +54,13 @@ setGlassVariant('ice');          // polycrystalline H₂O ice, IOR=1.309
 | `tinted-blue` | 1.47 | Cobalt architectural glass |
 | `tinted-violet` | 1.49 | UV-filter / amethyst crystal |
 | `tinted-amber` | 1.53 | Amber / honey-gold cognac glass |
-| `mirror` | 1.785 | First-surface silver mirror (SF11) |
+| `pearl` | 1.785 | Mother-of-pearl nacre — former v4.1 mirror look (v4.2) |
 | `ice` | 1.309 | Polycrystalline H₂O ice (Warren 2008) |
 | `bronze` | 1.58 | Bronze / copper dichroic |
 | `emerald` | 1.575 | Chrome-doped beryl (Cr³⁺ absorption) |
+| `cyan` | 1.575 | Desaturated teal-cyan — former v4.1 emerald look (v4.2) |
 | `rose` | 1.46 | Rose quartz / manganese silicate |
+| `mauve` | 1.46 | Dusty rose-mauve — former v4.1 rose look (v4.2) |
 | `obsidian` | 1.49 | Volcanic rhyolite glass (Fe²⁺/Fe³⁺) |
 
 ### Beer-Lambert chromatic absorption
@@ -78,7 +80,7 @@ Multi-scale noise UV jitter (11× + 27× frequency, independent drift axes) appr
 
 ### Mirror reflection mode
 
-`u_mirrorStrength` collapses background transmission (`refractedBg × (1 − mirror × 0.92)`) and amplifies the environment reflection term by up to 6.5×. The mirror variant uses IOR 1.785 (SF11) for F0 ≈ 0.079 — twice the reflectance of standard glass — producing crisp Fresnel rim highlights.
+`u_mirrorStrength` collapses background transmission (`refractedBg × (1 − mirror × 0.92)`) and amplifies the environment reflection term by up to 6.5×. The `pearl` variant drives it at `mirror=0.92` with IOR 1.785 (SF11) for F0 ≈ 0.079 — twice the reflectance of standard glass — producing crisp Fresnel rim highlights.
 
 ### Smoke density
 
@@ -525,7 +527,7 @@ import { setGlassVariant } from './liquid-glass-pro.js';
 
 setGlassVariant('frosted');       // ground glass, 40px blur, heavy scatter
 setGlassVariant('tinted-blue');   // cobalt architectural glass
-setGlassVariant('mirror');        // first-surface silver mirror
+setGlassVariant('pearl');         // mother-of-pearl nacre
 setGlassVariant('clear');         // back to default
 ```
 
@@ -821,21 +823,25 @@ Each variant is a complete physical description of a glass surface. All paramete
 
 **`smoke`** — Automotive / architectural dark tint film, IOR 1.52. Neutral-density Beer-Lambert absorption. `smokeDensity=0.52` post-composite darkening. `brightness=0.66`.
 
-**`tinted-blue`** — Cobalt architectural glass, IOR 1.47. Strong Beer-Lambert R/G absorption (σR=3.1, σG=1.8, σB=0.2). `hue-rotate(210deg)` in CSS layer. Blue-cyan caustic filaments.
+**`tinted-blue`** — Cobalt architectural glass, IOR 1.47. Strong Beer-Lambert R/G absorption (σR=3.1, σG=1.8, σB=0.2). Dense cobalt overlay in the CSS layer (v4.2). Blue-cyan caustic filaments.
 
 **`tinted-violet`** — UV-filter glass / amethyst crystal, IOR 1.49. Absorbs green trough (550nm), passes R+B → purple. `hue-rotate(270deg)`.
 
-**`tinted-amber`** — Amber / cognac glass, IOR 1.53. Strong B absorption (σB=4.2), minimal R/G → warm glow. `sepia(25%)` in CSS layer. Warm caustic filaments.
+**`tinted-amber`** — Amber / cognac glass, IOR 1.53. Strong B absorption (σB=4.2), minimal R/G → warm glow. Desaturating amber overlay in the CSS layer (v4.2). Warm caustic filaments.
 
-**`mirror`** — First-surface silver mirror coating. IOR 1.785 (SF11) → F0 ≈ 0.079. `mirror=0.92` collapses transmission. `causticScale=1.50` — caustics become sharp specular flares. `blur(3px)` — mirror glass is optically flat.
+**`pearl`** *(v4.2)* — Mother-of-pearl nacre, IOR 1.785 (SF11) → F0 ≈ 0.079. `mirror=0.92` boosts the environment reflection; `causticScale=1.50` — caustics become sharp specular flares. Minimal blur, high brightness — the bright milky-silver look originally shipped as the v4.1 "mirror".
 
-**`ice`** — Polycrystalline H₂O ice (Warren & Brandt 2008, 550nm, T=−10°C). IOR 1.309. `frosted=0.42` simulates grain-boundary scatter. Cold-blue caustic tint. High brightness (1.22) — ice transmits very well in visible range.
+**`ice`** — Polycrystalline H₂O ice (Warren & Brandt 2008, 550nm, T=−10°C). IOR 1.309. `frosted=0.55` simulates grain-boundary scatter. Cold-blue caustic tint, dense milky blue-white overlay (v4.2). High brightness (1.28) — ice transmits very well in visible range.
 
 **`bronze`** — Bronze / copper dichroic glass, IOR 1.58. Beer-Lambert absorbs B strongly. `sepia(40%)` + warm saturate in CSS. Warm gold caustic filaments.
 
-**`emerald`** — Chrome-doped beryl (Cr³⁺ absorption peaks at 430nm and 610nm), IOR 1.575. Strong G transmission window near 500–570nm. `hue-rotate(140deg)`. Vivid green caustic filaments.
+**`emerald`** — Chrome-doped beryl (Cr³⁺ absorption peaks at 430nm and 610nm), IOR 1.575. Strong G transmission window near 500–570nm. Dense gem-green overlay (v4.2). Vivid green caustic filaments.
 
-**`rose`** — Rose quartz / manganese silicate, IOR 1.46. Absorbs 490–580nm (green), passes red+blue. `hue-rotate(330deg)`.
+**`cyan`** *(v4.2)* — Desaturated teal-cyan glass, IOR 1.575. Preserves the surface originally shipped as the v4.1 "emerald" verbatim.
+
+**`rose`** — Rose quartz / manganese silicate, IOR 1.46. Absorbs 490–580nm (green), passes red+blue. Dense quartz-pink overlay (v4.2).
+
+**`mauve`** *(v4.2)* — Muted dusty rose-mauve glass, IOR 1.46. Preserves the surface originally shipped as the v4.1 "rose" verbatim.
 
 **`obsidian`** — Volcanic rhyolite glass (~72% SiO₂), IOR 1.49. Near-black from Fe²⁺/Fe³⁺/magnetite inclusions. `smokeDensity=0.74`, `tintStrength=0.86`. Subtle purple glow in shadow stack from characteristic obsidian iridescence. `brightness=0.54`.
 
@@ -1060,7 +1066,7 @@ Max delta-time capped at 50 ms to prevent integrator explosion on tab wake-up.
 - Use `caustics: false` on decorative elements that don't need the full effect
 - `glassType: 'NK51A'` has the smallest per-channel IOR spread — marginally cheaper
 - `glassVariant: 'frosted'` is the most GPU-intensive variant due to the three-tap scatter pass
-- `glassVariant: 'clear'` or `'mirror'` have no scatter cost
+- `glassVariant: 'clear'` or `'pearl'` have no scatter cost
 
 ---
 
@@ -1095,7 +1101,7 @@ Max delta-time capped at 50 ms to prevent integrator explosion on tab wake-up.
 ### v4.1.0
 
 **Glass Variant System (`GLASS_VARIANTS`, `setGlassVariant()`, `getGlassVariants()`)**
-- Twelve physically-grounded surface presets from real optical constants
+- Fourteen physically-grounded surface presets from real optical constants
 - `GlassVariantDef` type: `{ label, cssClass, ior, tintRGB, tintStrength, frosted, mirror, smokeDensity, causticScale, causticTint, blurPx, saturate, brightness, bgTint }`
 - `setGlassVariant(key)` removes old variant class, applies new one, updates `_opts.ior` and `_opts.glassVariant`
 - `getGlassVariants()` returns shallow copy of `GLASS_VARIANTS` for picker UIs
@@ -1124,7 +1130,7 @@ Max delta-time capped at 50 ms to prevent integrator explosion on tab wake-up.
 - `gl.uniform3f(u_tintRGB, ...)`, `gl.uniform1f(u_tintStrength, ...)`, `u_frostedAmount`, `u_mirrorStrength`, `u_smokeDensity`, `u_causticScale`, `gl.uniform3f(u_causticTint, ...)` all uploaded from `GLASS_VARIANTS[_opts.glassVariant]` each frame
 
 **CSS variant override layer (§8)**
-- Twelve `.lg-v-{name}` rule blocks added to `_buildCSS()` output
+- Fourteen `.lg-v-{name}` rule blocks added to `_buildCSS()` output
 - Each overrides `backdrop-filter` and `background` gradient for first-frame accuracy
 - Variant-specific hover/active states per class
 - Shared `.lg.lg-interactive:hover` brightness overrides for tinted/dark variants
